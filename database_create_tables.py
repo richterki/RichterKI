@@ -34,10 +34,10 @@ def main():
     database = "db/pythonsqlite_neu.db"
 
     sql_create_fall_table = """ CREATE TABLE IF NOT EXISTS fall (
-                                        id integer PRIMARY KEY,
-                                        name text NOT NULL,
-                                        begin_date text,
-                                        end_date text
+                                        fall_id integer PRIMARY KEY,
+                                        stadt_id text NOT NULL,
+                                        urteil text,
+                                        schlagwoerter text
                                     ); """
 
     sql_create_fall_infos_table = """CREATE TABLE IF NOT EXISTS fall_infos (
