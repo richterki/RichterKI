@@ -1,30 +1,9 @@
-
-# ----Example Python Program to create tables in disk file based SQLite databases----
-
-
-# Import the sqlite3 module
-
 import sqlite3
 
 
-# Create a database connection to a disk file based database
-
 connectionObject = sqlite3.connect("../db/test.db")
-
-
-# Obtain a cursor object
-
 cursorObject = connectionObject.cursor()
 
-
-# Drop any existing table with the same name
-
-# dropTable = "drop table temperature"
-
-# cursorObject.execute(dropTable)
-
-
-# Create a table in the disk file based database
 
 createTable_fall = "CREATE TABLE IF NOT EXISTS fall(fall_id int, stadt_id int, urteil varchar, schlagwoerter varchar(3,1))"
 cursorObject.execute(createTable_fall)
