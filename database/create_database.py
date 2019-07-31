@@ -29,6 +29,7 @@ cursorObject.execute(createTable_gesetzbuecher)
 
 # insertValues = "INSERT INTO temperature values(2,65.4)"
 
+
 # cursorObject.execute(insertValues)
 
 
