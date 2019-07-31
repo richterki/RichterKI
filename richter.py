@@ -10,7 +10,7 @@
 # Funktionen -------------------------------------------------------------------
 
 def main():
-    print("Es soll helfen!!!")
+    print("Es soll helfen!!!\nBut don't do this!")
 
 # TODO: Auswertungs KI Programmieren
 #       - mit Variablen: anklage & verteidigungDesAngeklagten
