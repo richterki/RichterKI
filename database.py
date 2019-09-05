@@ -122,7 +122,7 @@ def main():
 
         # namen
         print('===NAMEN===')
-        namen = (int(input('buch_id >> ')), input('klaeger >> '),
+        namen = (int(input('fall_id >> ')), input('klaeger >> '),
                  input('angeklagter >> '), input('richter >> '))
         create_namen(conn, namen)
 

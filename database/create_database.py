@@ -53,7 +53,6 @@ queryResults_gesetzbuecher = cursorObject.execute(queryTable_gesetzbuecher)
 
 # Print the Temperature records
 
-print("(CityId, Temperature)")
 
 for result in queryResults_fall:
     print(result)
@@ -70,5 +69,6 @@ for result in queryResults_gesetzbuecher_liste:
 for result in queryResults_gesetzbuecher:
     print(result)
 
+print('Datenbank wurde erstellt...')
 
 connectionObject.close()
