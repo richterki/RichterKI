@@ -61,21 +61,6 @@ def create_gesetzbuecher(conn, gesetzbuecher):
     return cur.lastrowid
 
 
-def create_gesetzbuecher_liste(conn, gesetzbuecher_liste):
-    """
-    Create a new task
-    :param conn:
-    :param task:
-    :return:
-    """
-
-    sql = ''' INSERT INTO gesetzbuecher_liste(buch_id,name,justiz_bereich)
-              VALUES(?,?,?) '''
-    cur = conn.cursor()
-    cur.execute(sql, gesetzbuecher_liste)
-    return cur.lastrowid
-
-
 def create_namen(conn, namen):
     """
     Create a new task
@@ -113,12 +98,6 @@ def main():
         gesetzbuecher = (int(input('buch_id >> ')), int(input('paragraphen >> ')),
                          input('absatz >> '), input('inhalt >> '))
         create_gesetzbuecher(conn, gesetzbuecher)
-
-        # gesetzbuecher_liste
-        print('===GESETZBÜCHER LISTE===')
-        gesetzbuecher_liste = (int(input('buch_id >> ')), input(
-            'name >> '), input('justiz_bereich >> '))
-        create_gesetzbuecher_liste(conn, gesetzbuecher_liste)
 
         # namen
         print('===NAMEN===')

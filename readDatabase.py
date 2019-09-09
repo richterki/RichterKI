@@ -62,21 +62,6 @@ def select_gesetzbuecher(conn):
         print(row)
 
 
-def select_gesetzbuecher_liste(conn):
-    """
-    Query all rows in the tasks table
-    :param conn: the Connection object
-    :return:
-    """
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM gesetzbuecher_liste")
-
-    rows = cur.fetchall()
-
-    for row in rows:
-        print(row)
-
-
 def select_namen(conn):
     """
     Query all rows in the tasks table
@@ -108,10 +93,6 @@ def main():
 
         print("gesetzbuecher")
         select_gesetzbuecher(conn)
-        print("")
-
-        print("gesetzbuecher_liste")
-        select_gesetzbuecher_liste(conn)
         print("")
 
         print("namen")
