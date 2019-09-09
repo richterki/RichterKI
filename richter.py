@@ -7,23 +7,25 @@
 
 # Imports ----------------------------------------------------------------------
 
-# Funktionen -------------------------------------------------------------------
-
-def main():
-    print("Es soll helfen!!!\nBut don't do this!")
-
-# TODO: Auswertungs KI Programmieren
-#       - mit Variablen: anklage & verteidigungDesAngeklagten
-
-# Variablen --------------------------------------------------------------------
-
-# Main Defenition --------------------------------------------------------------
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 # Main -------------------------------------------------------------------------
 
 
-main()
+class MeinNetz(nn.Module):
+    def __init__(self):
+        super(MeinNetz(), self).__init__()
+        self.lin1 = nn.Linear(10, 10)
+        self.lin2 = nn.Linear(10, 10)
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+    def forward(self, x):
+        pass
+
+    def num_flat_features(self, x):
+        pass
+
+
+netz = MeinNetz()
+print(netz)
