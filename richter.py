@@ -10,8 +10,27 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import readDatabase as rdb
 
 # Main -------------------------------------------------------------------------
+
+# Fall abfragen
+
+fall = input("Bitte geben Sie die Anschuldigung ein >> ")
+
+# Datenverarbeitung ------------------------------------------------------------
+
+db_fall = rdb.getFall()
+
+
+if fall in db_fall:
+    print("Fall gefunden")
+
+else:
+    ("keinen Fall gefunden")
+
+
+# Netz -------------------------------------------------------------------------
 
 
 class Net(nn.Module):

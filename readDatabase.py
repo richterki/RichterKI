@@ -18,11 +18,7 @@ def create_connection(db_file):
 
 
 def select_fall(conn):
-    """
-    Query all rows in the tasks table
-    :param conn: the Connection object
-    :return:
-    """
+
     cur = conn.cursor()
     cur.execute("SELECT * FROM fall")
 
@@ -97,6 +93,17 @@ def main():
 
         print("namen")
         select_namen(conn)
+        print("")
+
+
+def getFall():
+    database = r"D:\\CODE\\Python\\RichterKI\\db\\test.db"
+
+    # create a database connection
+    conn = create_connection(database)
+    with conn:
+        print("fall")
+        select_fall(conn)
         print("")
 
 
