@@ -25,7 +25,8 @@ def select_fall(conn):
     rows = cur.fetchall()
 
     for row in rows:
-        print(row)
+        # print(row)
+        return str(row)
 
 
 def select_fall_infos(conn):
@@ -74,7 +75,7 @@ def select_namen(conn):
 
 
 def main():
-    database = r"D:\\CODE\\Python\\RichterKI\\db\\test.db"
+    database = r"D:\\CODE\\Python\\RichterKI\\db\\FallDatabase.db"
 
     # create a database connection
     conn = create_connection(database)
@@ -97,14 +98,15 @@ def main():
 
 
 def getFall():
-    database = r"D:\\CODE\\Python\\RichterKI\\db\\test.db"
+    database = r"D:\\CODE\\Python\\RichterKI\\db\\FallDatabase.db"
 
     # create a database connection
     conn = create_connection(database)
     with conn:
-        print("fall")
-        select_fall(conn)
-        print("")
+        # print("fall")
+
+        # print("")
+        return str(select_fall(conn))
 
 
 if __name__ == '__main__':

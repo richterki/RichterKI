@@ -1,20 +1,20 @@
 import sqlite3
 
 
-connectionObject = sqlite3.connect("../db/test.db")
+connectionObject = sqlite3.connect("../db/FallDatabase.db")
 cursorObject = connectionObject.cursor()
 
 
-createTable_fall = "CREATE TABLE IF NOT EXISTS fall(fall_id int, stadt_id int, urteil varchar, schlagwoerter varchar(3,1))"
+createTable_fall = "CREATE TABLE IF NOT EXISTS fall(fall_id int, stadt_id int, anklage varchar, urteil varchar, schlagwoerter varchar)"
 cursorObject.execute(createTable_fall)
 
-createTable_fall_infos = "CREATE TABLE IF NOT EXISTS fall_infos(fall_id int, protokoll varchar, urteil varchar(3,1))"
+createTable_fall_infos = "CREATE TABLE IF NOT EXISTS fall_infos(fall_id int, protokoll varchar, anklage varchar, urteil varchar)"
 cursorObject.execute(createTable_fall_infos)
 
-createTable_namen = "CREATE TABLE IF NOT EXISTS namen(fall_id int, klaeger varchar, angeklagter varchar, richter varchar(3,1))"
+createTable_namen = "CREATE TABLE IF NOT EXISTS namen(fall_id int, klaeger varchar, angeklagter varchar, richter varchar)"
 cursorObject.execute(createTable_namen)
 
-createTable_gesetzbuecher = "CREATE TABLE IF NOT EXISTS gesetzbuecher(buch_id int, paragraphen int, absatz varchar, inhalt varchar(3,1))"
+createTable_gesetzbuecher = "CREATE TABLE IF NOT EXISTS gesetzbuecher(buch_id int, paragraphen int, absatz varchar, inhalt varchar)"
 cursorObject.execute(createTable_gesetzbuecher)
 
 # Insert EOD stats into the reports table

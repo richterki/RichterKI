@@ -24,8 +24,8 @@ def create_fall(conn, fall):
     :param project:
     :return: project id
     """
-    sql = ''' INSERT INTO fall(fall_id,stadt_id,urteil,schlagwoerter)
-              VALUES(?,?,?,?) '''
+    sql = ''' INSERT INTO fall(fall_id,stadt_id,anklage,urteil,schlagwoerter)
+              VALUES(?,?,?,?,?) '''
     cur = conn.cursor()
     cur.execute(sql, fall)
     return cur.lastrowid
@@ -39,8 +39,8 @@ def create_fall_infos(conn, fall_infos):
     :return:
     """
 
-    sql = ''' INSERT INTO fall_infos(fall_id,protokoll,urteil)
-              VALUES(?,?,?) '''
+    sql = ''' INSERT INTO fall_infos(fall_id,protokoll,anklage,urteil)
+              VALUES(?,?,?,?) '''
     cur = conn.cursor()
     cur.execute(sql, fall_infos)
     return cur.lastrowid
@@ -77,7 +77,7 @@ def create_namen(conn, namen):
 
 
 def main():
-    database = r"D:\\CODE\\Python\\RichterKI\\db\\test.db"
+    database = r"D:\\CODE\\Python\\RichterKI\\db\\FallDatabase.db"
 
     # create a database connection
     conn = create_connection(database)
@@ -85,12 +85,13 @@ def main():
         # fall
         print('===FALL===')
         fall = (int(input('fall_id >> ')), int(input('stadt_id >> ')),
-                input('urteil >> '), input('schlagwoerter >> '))
+                input('urteil >> '), input('anklage >> '), input('schlagwoerter >> '))
         create_fall(conn, fall)
 
         # fall_infos
         print('===FALL INFOS===')
-        fall_infos = (int(input('fall_id >> ')), input('protokoll >> '), input('urteil >> '))
+        fall_infos = (int(input('fall_id >> ')), input('protokoll >> '),
+                      input('anklage >> '), input('urteil >> '))
         create_fall_infos(conn, fall_infos)
 
         # gesetzbuecher

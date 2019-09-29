@@ -21,10 +21,15 @@ fall = input("Bitte geben Sie die Anschuldigung ein >> ")
 # Datenverarbeitung ------------------------------------------------------------
 
 db_fall = rdb.getFall()
+schlagwoerter_list = db_fall.split("', '")[2]
+schlagwoerter = str(schlagwoerter_list.split(","))
+print(schlagwoerter)
 
-
-if fall in db_fall:
+if fall in schlagwoerter:
     print("Fall gefunden")
+    fall_id_list = str(db_fall.split("', '")).split(", ")[0]
+    fall_id = fall_id_list.split('["(')[1]
+    print("Fall-ID: " + fall_id)
 
 else:
     ("keinen Fall gefunden")
