@@ -16,10 +16,11 @@ import readDatabase as rdb
 
 # Fall abfragen
 
-fall = input("Bitte geben Sie die Anschuldigung ein >> ")
+input_fall = input("Bitte geben Sie die Anschuldigung ein >> ")
 
 # Datenverarbeitung ------------------------------------------------------------
 
+"""
 db_fall = rdb.getFall()
 schlagwoerter_list = db_fall.split("', '")[2]
 schlagwoerter = str(schlagwoerter_list.split(","))
@@ -34,8 +35,27 @@ if fall in schlagwoerter:
 else:
     ("keinen Fall gefunden")
 
+"""
+faelle = rdb.getFall()
+fall_id = str(rdb.get_fall_id()).replace("['", "").replace("']", "")
+fall_schlagwoerter = str(faelle).replace("['", "").replace("']", "").split(", ")
+# print(type(fall_schlagwoerter))
+print(fall_id)
 
-# Netz -------------------------------------------------------------------------
+print(fall_schlagwoerter)
+
+for fall in fall_schlagwoerter:
+    if input_fall in fall_schlagwoerter:
+        print("Fall gefunden: ")
+        print("ID: " + fall_id)
+        print(fall)
+
+    else:
+        continue
+
+        # print(fall)
+
+        # Netz -------------------------------------------------------------------------
 
 
 class Net(nn.Module):

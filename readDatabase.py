@@ -19,14 +19,27 @@ def create_connection(db_file):
 
 def select_fall(conn):
 
+    conn.row_factory = lambda cursor, row: row[4]
     cur = conn.cursor()
     cur.execute("SELECT * FROM fall")
 
-    rows = cur.fetchall()
+    # rows = cur.fetchall()
 
-    for row in rows:
-        # print(row)
-        return str(row)
+    zlist = []
+
+    tupls = cur.fetchall()
+
+    for tup in tupls:
+
+        t = str(tup).replace("('", "").replace("',)", "")
+
+        zlist.append(t)
+
+        return zlist
+
+    # for row in rows:
+    #     print(row)
+    #    return row
 
 
 def select_fall_infos(conn):
@@ -35,6 +48,7 @@ def select_fall_infos(conn):
     :param conn: the Connection object
     :return:
     """
+    conn.row_factory = lambda cursor, row: row[0]
     cur = conn.cursor()
     cur.execute("SELECT * FROM fall_infos")
 
@@ -106,7 +120,40 @@ def getFall():
         # print("fall")
 
         # print("")
-        return str(select_fall(conn))
+        return select_fall(conn)
+
+
+def fall_id(conn):
+    conn.row_factory = lambda cursor, row: row[0]
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM fall")
+
+    # rows = cur.fetchall()
+
+    zlist = []
+
+    tupls = cur.fetchall()
+
+    for tup in tupls:
+
+        t = str(tup).replace("('", "").replace("',)", "")
+
+        zlist.append(t)
+
+        return zlist
+
+    # for row in rows:
+    #     print(row)
+    #    return row
+
+
+def get_fall_id():
+    database = r"D:\\CODE\\Python\\RichterKI\\db\\FallDatabase.db"
+
+    # create a database connection
+    conn = create_connection(database)
+    with conn:
+        return fall_id(conn)
 
 
 if __name__ == '__main__':
