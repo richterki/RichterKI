@@ -81,5 +81,25 @@ for fall in faelle:
         continue
     """
 
-print(urteilToTensor(data['Einbruch'][0]))
 # Netz -------------------------------------------------------------------------
+
+
+class Netz(nn.Module):
+    def __init__(self, input, hiddens, output):
+        super(Netz, self).__init__()
+        self.hiddens = hiddens
+        self.hid = nn.Linear(input + hiddens, hiddens)
+        self.out = nn.Linear(input + hiddens, output)
+        self.logsoftmax = nn.LogSoftmax(dim=1)
+
+    def forward(self, x, hidden):
+        x = torch.cat((x, hidden), 1)
+        new_hidden = self.hid(x)
+        output = self.logsoftmax(self.out(x))
+        return output, new_hidden
+
+    def initHidden(self):
+        return Variable(torch.zeros(1, self.hiddens))
+
+
+model = Netz(len(letters), 128, len(data))
