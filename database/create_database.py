@@ -5,7 +5,7 @@ connectionObject = sqlite3.connect("../db/FallDatabase.db")
 cursorObject = connectionObject.cursor()
 
 
-createTable_fall = "CREATE TABLE IF NOT EXISTS fall(fall_id int, stadt_id int, anklage varchar, urteil int, schlagwoerter varchar)"
+createTable_fall = "CREATE TABLE IF NOT EXISTS fall(fall_id int, stadt_id int, anklage varchar, verurteilt int, urteil varchar, schlagwoerter varchar)"
 cursorObject.execute(createTable_fall)
 
 createTable_fall_infos = "CREATE TABLE IF NOT EXISTS fall_infos(fall_id int, protokoll varchar, anklage varchar, urteil varchar)"
