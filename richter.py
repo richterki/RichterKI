@@ -12,7 +12,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import readDatabase as rdb
 
-# Main -------------------------------------------------------------------------
+#  ====== Main ======  ---------------------------------------------------------
 
 # Fall abfragen
 
@@ -20,42 +20,22 @@ input_fall = input("Bitte geben Sie die Anschuldigung ein >> ")
 
 # Datenverarbeitung ------------------------------------------------------------
 
-"""
-db_fall = rdb.getFall()
-schlagwoerter_list = db_fall.split("', '")[2]
-schlagwoerter = str(schlagwoerter_list.split(","))
-print(schlagwoerter)
-
-if fall in schlagwoerter:
-    print("Fall gefunden")
-    fall_id_list = str(db_fall.split("', '")).split(", ")[0]
-    fall_id = fall_id_list.split('["(')[1]
-    print("Fall-ID: " + fall_id)
-
-else:
-    ("keinen Fall gefunden")
-
-"""
 faelle = rdb.getFall()
-fall_id = str(rdb.get_fall_id()).replace("['", "").replace("']", "")
+
 fall_schlagwoerter = str(faelle).replace("['", "").replace("']", "").split(", ")
-# print(type(fall_schlagwoerter))
-print(fall_id)
 
-print(fall_schlagwoerter)
 
-for fall in fall_schlagwoerter:
-    if input_fall in fall_schlagwoerter:
+for fall in faelle:
+    if input_fall in fall[4]:
+        fall_id = fall[0]
         print("Fall gefunden: ")
-        print("ID: " + fall_id)
+        print("ID: " + str(fall_id))
         print(fall)
 
     else:
         continue
 
-        # print(fall)
-
-        # Netz -------------------------------------------------------------------------
+# Netz -------------------------------------------------------------------------
 
 
 class Net(nn.Module):

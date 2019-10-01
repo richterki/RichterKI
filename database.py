@@ -24,7 +24,7 @@ def create_fall(conn, fall):
     :param project:
     :return: project id
     """
-    sql = ''' INSERT INTO fall(fall_id,stadt_id,anklage,urteil,schlagwoerter)
+    sql = ''' INSERT INTO fall(fall_id,stadt_id,urteil,anklage,schlagwoerter)
               VALUES(?,?,?,?,?) '''
     cur = conn.cursor()
     cur.execute(sql, fall)
@@ -85,7 +85,7 @@ def main():
         # fall
         print('===FALL===')
         fall = (int(input('fall_id >> ')), int(input('stadt_id >> ')),
-                input('urteil >> '), input('anklage >> '), input('schlagwoerter >> '))
+                input('urteil (0/1) >> '), input('anklage >> '), input('schlagwoerter >> '))
         create_fall(conn, fall)
 
         # fall_infos

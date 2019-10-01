@@ -18,28 +18,18 @@ def create_connection(db_file):
 
 
 def select_fall(conn):
-
-    conn.row_factory = lambda cursor, row: row[4]
     cur = conn.cursor()
     cur.execute("SELECT * FROM fall")
 
-    # rows = cur.fetchall()
+    rows = cur.fetchall()
 
-    zlist = []
+    fall_liste_tp = []
 
-    tupls = cur.fetchall()
+    for row in rows:
+        fall_liste_tp.append(row)
 
-    for tup in tupls:
-
-        t = str(tup).replace("('", "").replace("',)", "")
-
-        zlist.append(t)
-
-        return zlist
-
-    # for row in rows:
-    #     print(row)
-    #    return row
+    fall_liste = [list(elem) for elem in fall_liste_tp]
+    return fall_liste
 
 
 def select_fall_infos(conn):
