@@ -13,6 +13,7 @@ import torch.nn.functional as F
 import readDatabase as rdb
 import string
 from torch.autograd import Variable
+import random
 
 # Variablen --------------------------------------------------------------------
 
@@ -31,9 +32,6 @@ faelle = rdb.getFall()
 fall_schlagwoerter = str(faelle).replace("['", "").replace("']", "").split(", ")
 
 
-data = {}
-
-
 def charToIndex(char):
     return letters.find(char)
 
@@ -44,31 +42,36 @@ def charToTensor(char):
     return ret
 
 
-def urteilToTensor(urteil_t):
+def anklageToTensor(urteil_t):
     ret = torch.zeros(len(urteil_t), 1, len(letters))
     for i, char in enumerate(urteil_t):
         ret[i][0][charToIndex(char)] = 1
     return ret
 
 
-def urteil_f():
+def anklage_f():
     ul = []
     for i in faelle:
         ul.append(i[4])
     return ul
 
 
+data = {}
+urteile = []
+
 for fall in faelle:
     fall_id = fall[0]
     stadt_id = fall[1]
-    anklage = fall[2]
+    # anklage = fall[2]
     verurteilt = fall[3]
-    # urteil = fall[4]
+    urteil = fall[4]
     schlagwoerter = fall[5]
 
     # print(anklage)
-    urteil = urteil_f()
-    data[anklage] = urteil
+    anklage = anklage_f()
+
+    urteile.append(urteil)
+    data[urteil] = anklage
 
     """
     if input_fall in fall[5]:
@@ -103,3 +106,33 @@ class Netz(nn.Module):
 
 
 model = Netz(len(letters), 128, len(data))
+
+
+def urteilFromOutput(out):
+    _, i = out.data.topk(1)
+    return urteile[i[0][0]]
+
+
+def getTrainData():
+    urteil = random.choice(urteile)
+    anklage = random.choice(data[urteil])
+    anklage_tensor = Variable(anklageToTensor(anklage))
+    urteil_tensor = Variable(torch.LongTensor([urteile.index(urteil)]))
+    return urteil, anklage, urteil_tensor, anklage_tensor
+
+
+criterion = nn.NLLLoss()
+
+
+def train(urteil_tensor, anklage_tensor):
+    hidden = model.initHidden()
+    model.zero_grad()
+    for i in range(anklage_tensor.size()[0]):
+        output, hidden = model(anklage_tensor[i], hidden)
+    loss = criterion(output, urteil_tensor)
+    loss.backward()
+    for i in model.parameters():
+        i.data.add_(-0.01, i.grad.data)
+
+    print("Loss:", loss.data[0])
+    return output
