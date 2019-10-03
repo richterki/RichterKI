@@ -94,6 +94,7 @@ def main():
                       input('anklage >> '), input('urteil >> '))
         create_fall_infos(conn, fall_infos)
 
+        """
         # gesetzbuecher
         print('===GESETZBÜCHER===')
         gesetzbuecher = (int(input('buch_id >> ')), int(input('paragraphen >> ')),
@@ -107,6 +108,7 @@ def main():
         create_namen(conn, namen)
 
         print('Datenbank wurde beschrieben')
+        """
 
 
 if __name__ == '__main__':

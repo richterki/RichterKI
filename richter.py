@@ -15,10 +15,17 @@ import string
 from torch.autograd import Variable
 import random
 import matplotlib.pyplot as plt
+import progressbar
 
 # Variablen --------------------------------------------------------------------
 
 letters = string.ascii_letters + ".,:'"
+
+widgets = [
+    ' [', progressbar.Timer(), '] ',
+    progressbar.Bar(),
+    ' (', progressbar.ETA(), ') ',
+]
 
 #  ====== Main ======  ---------------------------------------------------------
 
@@ -133,7 +140,7 @@ def train(urteil_tensor, anklage_tensor, lern_rate):
     loss = criterion(output, urteil_tensor)
     loss.backward()
     for i in model.parameters():
-        i.data.add_(-0.01, i.grad.data)
+        i.data.add_(-0.05, i.grad.data)
 
     return output, loss
 
@@ -141,16 +148,21 @@ def train(urteil_tensor, anklage_tensor, lern_rate):
 avg = []
 sum = 0
 lern_rate = 0.1
-for i in range(1, 10000):
-    urteil, anklage, urteil_tensor, anklage_tensor = getTrainData()
-    output, loss = train(urteil_tensor, anklage_tensor, lern_rate)
-    sum = sum + loss.data
 
-    if i % 100 == 0:
-        # lern_rate = lern_rate / 2
-        avg.append(sum/100)
-        sum = 0
-        print(i/100, "% done.")
+
+with progressbar.ProgressBar(max_value=1000) as bar:
+    for i in range(1, 1000):
+        urteil, anklage, urteil_tensor, anklage_tensor = getTrainData()
+        output, loss = train(urteil_tensor, anklage_tensor, lern_rate)
+        sum = sum + loss.data
+
+        if i % 100 == 0:
+            # lern_rate = lern_rate / 2
+            avg.append(sum/100)
+            sum = 0
+            # print(i/100, "% done.")
+            bar.update(i)
+
 
 plt.figure()
 plt.plot(avg)
