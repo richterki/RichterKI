@@ -14,6 +14,7 @@ import readDatabase as rdb
 import string
 from torch.autograd import Variable
 import random
+import matplotlib.pyplot as plt
 
 # Variablen --------------------------------------------------------------------
 
@@ -124,7 +125,7 @@ def getTrainData():
 criterion = nn.NLLLoss()
 
 
-def train(urteil_tensor, anklage_tensor):
+def train(urteil_tensor, anklage_tensor, lern_rate):
     hidden = model.initHidden()
     model.zero_grad()
     for i in range(anklage_tensor.size()[0]):
@@ -134,5 +135,23 @@ def train(urteil_tensor, anklage_tensor):
     for i in model.parameters():
         i.data.add_(-0.01, i.grad.data)
 
-    print("Loss:", loss.data[0])
-    return output
+    return output, loss
+
+
+avg = []
+sum = 0
+lern_rate = 0.1
+for i in range(1, 10000):
+    urteil, anklage, urteil_tensor, anklage_tensor = getTrainData()
+    output, loss = train(urteil_tensor, anklage_tensor, lern_rate)
+    sum = sum + loss.data
+
+    if i % 100 == 0:
+        # lern_rate = lern_rate / 2
+        avg.append(sum/100)
+        sum = 0
+        print(i/100, "% done.")
+
+plt.figure()
+plt.plot(avg)
+plt.show()
