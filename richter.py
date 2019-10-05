@@ -125,7 +125,7 @@ class Netz(nn.Module):
 
 # print(len(data))
 
-# model = Netz(len(letters), 128, len(data))
+model = Netz(len(letters), 128, len(data))
 
 if os.path.isfile('Netz.pt'):
     model = torch.load('Netz.pt')
@@ -165,11 +165,21 @@ def train(urteil_tensor, anklage_tensor, lern_rate):
     return output, loss
 
 
+def test():
+    model.eval()
+    anklage = input("Bitte geben sie die anklage ein: ")
+    anklage_eval_tensor = anklageToTensor(anklage)
+    anklage_eval_tensor.unsqueeze_(0)
+    data = Variable(anklage_eval_tensor)
+    out = model(data, torch.Tensor(128))
+    print(out)
+
+
 avg = []
 sum = 0
 lern_rate = 0.1
 
-
+"""
 with progressbar.ProgressBar(max_value=10000) as bar:
     for i in range(1, 10000):
         urteil, anklage, urteil_tensor, anklage_tensor = getTrainData()
@@ -185,7 +195,10 @@ with progressbar.ProgressBar(max_value=10000) as bar:
 
 torch.save(model, 'Netz.pt')
 print("Netz gespeichert...")
+"""
 
 plt.figure()
 plt.plot(avg)
 plt.show()
+
+test()
