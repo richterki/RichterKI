@@ -9,7 +9,6 @@
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import readDatabase as rdb
 import string
 from torch.autograd import Variable
@@ -87,6 +86,7 @@ for fall in faelle:
     urteile.append(urteil)
     data[urteil] = anklage
 
+n_categories = len(urteile)
 
 """
     if input_fall in fall[5]:
@@ -106,34 +106,41 @@ for fall in faelle:
 
 
 class Netz(nn.Module):
-    def __init__(self, input, hiddens, output):
+    def __init__(self, input_size, hidden_size, output_size):
         super(Netz, self).__init__()
-        self.hiddens = hiddens
-        self.hid = nn.Linear(input + hiddens, hiddens)
-        self.out = nn.Linear(input + hiddens, output)
-        self.logsoftmax = nn.LogSoftmax(dim=1)
 
-    def forward(self, x, hidden):
-        x = torch.cat((x, hidden), 1)
-        new_hidden = self.hid(x)
-        output = self.logsoftmax(self.out(x))
-        return output, new_hidden
+        self.hidden_size = hidden_size
+
+        self.i2h = nn.Linear(input_size + hidden_size, hidden_size)
+        self.i2o = nn.Linear(input_size + hidden_size, output_size)
+        self.softmax = nn.LogSoftmax()
+
+    def forward(self, input, hidden):
+        combined = torch.cat((input, hidden), 1)
+        hidden = self.i2h(combined)
+        output = self.i2o(combined)
+        output = self.softmax(output)
+        return output, hidden
 
     def initHidden(self):
-        return Variable(torch.zeros(1, self.hiddens))
+        return Variable(torch.zeros(1, self.hidden_size))
 
 
-# print(len(data))
+n_hidden = 128
+n_epochs = 100000
+print_every = 5000
+plot_every = 1000
+learning_rate = 0.005  # If you set this too high, it might explode. If too low, it might not learn
 
-model = Netz(len(letters), 128, len(data))
 
 if os.path.isfile('Netz.pt'):
     model = torch.load('Netz.pt')
 
 
 def urteilFromOutput(out):
-    _, i = out.data.topk(1)
-    return urteile[i[0][0]]
+    top_n, top_i = output.data.topk(1)  # Tensor out of Variable with .data
+    category_i = top_i[0][0]
+    return urteile[category_i], category_i
 
 
 # print(anklage)
@@ -149,39 +156,63 @@ def getTrainData():
     return urteil, anklage, urteil_tensor, anklage_tensor
 
 
+model = Netz(n_letters, n_hidden, n_categories)
+optimizer = torch.optim.SGD(rnn.parameters(), lr=learning_rate)
 criterion = nn.NLLLoss()
 
 
-def train(urteil_tensor, anklage_tensor, lern_rate):
+def train(urteil_tensor, anklage_tensor):
     hidden = model.initHidden()
-    model.zero_grad()
+    optimizer.zero_grad()
+
     for i in range(anklage_tensor.size()[0]):
         output, hidden = model(anklage_tensor[i], hidden)
+
     loss = criterion(output, urteil_tensor)
     loss.backward()
-    optimizer = optim.SGD(model.parameters(), lr=0.01)
+
     optimizer.step()
 
-    return output, loss
+    return output, loss.data[0]
 
 
-def test():
-    model.eval()
-    anklage = input("Bitte geben sie die anklage ein: ")
-    anklage_eval_tensor = anklageToTensor(anklage)
-    anklage_eval_tensor.unsqueeze_(0)
-    data = Variable(anklage_eval_tensor)
-    out = model(data, torch.Tensor(128))
-    print(out)
+confusion = torch.zeros(n_categories, n_categories)
+n_confusion = 10000
+
+
+def evaluate(anklage_tensor):
+    hidden = model.initHidden()
+
+    for i in range(anklage_tensor.size()[0]):
+        output, hidden = model(anklage_tensor[i], hidden)
+
+    return output
+
+
+# Go through a bunch of examples and record which are correctly guessed
+def predict(input_line, n_predictions=3):
+    print('\n> %s' % input_line)
+    with torch.no_grad():
+        output = evaluate(anklageToTensor(input_line))
+
+        # Get top N categories
+        topv, topi = output.topk(n_predictions, 1, True)
+        predictions = []
+
+        for i in range(n_predictions):
+            value = topv[0][i].item()
+            category_index = topi[0][i].item()
+            print('(%.2f) %s' % (value, urteile[category_index]))
+            predictions.append([value, urteile[category_index]])
 
 
 avg = []
 sum = 0
 lern_rate = 0.1
 
-"""
-with progressbar.ProgressBar(max_value=10000) as bar:
-    for i in range(1, 10000):
+
+with progressbar.ProgressBar(max_value=1000) as bar:
+    for i in range(1, 1000):
         urteil, anklage, urteil_tensor, anklage_tensor = getTrainData()
         output, loss = train(urteil_tensor, anklage_tensor, lern_rate)
         sum = sum + loss.data
@@ -195,10 +226,10 @@ with progressbar.ProgressBar(max_value=10000) as bar:
 
 torch.save(model, 'Netz.pt')
 print("Netz gespeichert...")
-"""
+
 
 plt.figure()
 plt.plot(avg)
 plt.show()
 
-test()
+# predict('Einbruch')
