@@ -17,6 +17,8 @@ import matplotlib.pyplot as plt
 import progressbar
 import os
 import torch.optim as optim
+import time
+import math
 
 # Variablen --------------------------------------------------------------------
 
@@ -87,20 +89,9 @@ for fall in faelle:
     data[urteil] = anklage
 
 n_categories = len(urteile)
+n_letters = len(letters)
+# model = Netz(len(letters), 128, len(data))
 
-"""
-    if input_fall in fall[5]:
-
-        print("Fall gefunden: ")
-        print("ID: " + str(fall_id))
-        print(fall)
-
-    else:
-        continue
-    """
-
-# print(data)
-# print(urteile)
 
 # Netz -------------------------------------------------------------------------
 
@@ -113,7 +104,7 @@ class Netz(nn.Module):
 
         self.i2h = nn.Linear(input_size + hidden_size, hidden_size)
         self.i2o = nn.Linear(input_size + hidden_size, output_size)
-        self.softmax = nn.LogSoftmax()
+        self.softmax = nn.LogSoftmax(dim=1)
 
     def forward(self, input, hidden):
         combined = torch.cat((input, hidden), 1)
@@ -127,8 +118,8 @@ class Netz(nn.Module):
 
 
 n_hidden = 128
-n_epochs = 100000
-print_every = 5000
+n_epochs = 1000
+print_every = 10
 plot_every = 1000
 learning_rate = 0.005  # If you set this too high, it might explode. If too low, it might not learn
 
@@ -141,6 +132,18 @@ def urteilFromOutput(out):
     top_n, top_i = output.data.topk(1)  # Tensor out of Variable with .data
     category_i = top_i[0][0]
     return urteile[category_i], category_i
+
+
+def randomChoice(l):
+    return l[random.randint(0, len(l) - 1)]
+
+
+def randomTrainingPair():
+    category = randomChoice(urteile)
+    line = randomChoice(data[urteil])
+    category_tensor = Variable(torch.LongTensor([urteile.index(category)]))
+    line_tensor = Variable(anklageToTensor(line))
+    return category, line, category_tensor, line_tensor
 
 
 # print(anklage)
@@ -157,7 +160,7 @@ def getTrainData():
 
 
 model = Netz(n_letters, n_hidden, n_categories)
-optimizer = torch.optim.SGD(rnn.parameters(), lr=learning_rate)
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 criterion = nn.NLLLoss()
 
 
@@ -173,11 +176,54 @@ def train(urteil_tensor, anklage_tensor):
 
     optimizer.step()
 
-    return output, loss.data[0]
+    return output, loss.data
 
 
 confusion = torch.zeros(n_categories, n_categories)
 n_confusion = 10000
+
+
+avg = []
+sum = 0
+
+current_loss = 0
+all_losses = []
+
+
+def timeSince(since):
+    now = time.time()
+    s = now - since
+    m = math.floor(s / 60)
+    s -= m * 60
+    return '%dm %ds' % (m, s)
+
+
+start = time.time()
+
+
+for epoch in range(1, n_epochs + 1):
+    category, line, category_tensor, line_tensor = randomTrainingPair()
+    output, loss = train(category_tensor, line_tensor)
+    current_loss += loss
+
+    # Print epoch number, loss, name and guess
+    if epoch % print_every == 0:
+        guess, guess_i = urteilFromOutput(output)
+        correct = '✓' if guess == category else '✗ (%s)' % category
+        print('%d %d%% (%s) %.4f %s / %s %s' %
+              (epoch, epoch / n_epochs * 100, timeSince(start), loss, line, guess, correct))
+
+    # Add current loss avg to list of losses
+    if epoch % plot_every == 0:
+        all_losses.append(current_loss / plot_every)
+        current_loss = 0
+
+torch.save(model, 'Netz.pt')
+
+
+plt.figure()
+plt.plot(avg)
+plt.show()
 
 
 def evaluate(anklage_tensor):
@@ -205,31 +251,5 @@ def predict(input_line, n_predictions=3):
             print('(%.2f) %s' % (value, urteile[category_index]))
             predictions.append([value, urteile[category_index]])
 
-
-avg = []
-sum = 0
-lern_rate = 0.1
-
-
-with progressbar.ProgressBar(max_value=1000) as bar:
-    for i in range(1, 1000):
-        urteil, anklage, urteil_tensor, anklage_tensor = getTrainData()
-        output, loss = train(urteil_tensor, anklage_tensor, lern_rate)
-        sum = sum + loss.data
-
-        if i % 100 == 0:
-            # lern_rate = lern_rate / 2
-            avg.append(sum/100)
-            sum = 0
-            # print(i/100, "% done.")
-            bar.update(i)
-
-torch.save(model, 'Netz.pt')
-print("Netz gespeichert...")
-
-
-plt.figure()
-plt.plot(avg)
-plt.show()
 
 # predict('Einbruch')

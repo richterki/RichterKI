@@ -1,0 +1,12 @@
+with progressbar.ProgressBar(max_value=1000) as bar:
+    for i in range(1, 1000):
+        urteil, anklage, urteil_tensor, anklage_tensor = getTrainData()
+        output, loss = train(urteil_tensor, anklage_tensor, lern_rate)
+        sum = sum + loss.data
+
+        if i % 100 == 0:
+            # lern_rate = lern_rate / 2
+            avg.append(sum/100)
+            sum = 0
+            # print(i/100, "% done.")
+            bar.update(i)
