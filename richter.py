@@ -107,8 +107,8 @@ class Netz(nn.Module):
 
 
 n_hidden = 128
-n_epochs = 100000
-print_every = 1000
+n_epochs = 10000
+print_every = 100
 plot_every = 100
 learning_rate = 0.0005  # If you set this too high, it might explode. If too low, it might not learn
 
@@ -187,7 +187,7 @@ def timeSince(since):
 
 start = time.time()
 
-
+"""
 for epoch in range(1, n_epochs + 1):
     category, line, category_tensor, line_tensor = randomTrainingPair()
     output, loss = train(category_tensor, line_tensor)
@@ -211,6 +211,7 @@ torch.save(model, 'Netz.pt')
 plt.figure()
 plt.plot(all_losses)
 plt.show()
+"""
 
 
 def evaluate(anklage_tensor):
