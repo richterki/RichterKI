@@ -14,7 +14,6 @@ import string
 from torch.autograd import Variable
 import random
 import matplotlib.pyplot as plt
-import progressbar
 import os
 import torch.optim as optim
 import time
@@ -24,11 +23,6 @@ import math
 
 letters = string.ascii_letters + ".,:'"
 
-widgets = [
-    ' [', progressbar.Timer(), '] ',
-    progressbar.Bar(),
-    ' (', progressbar.ETA(), ') ',
-]
 
 #  ====== Main ======  ---------------------------------------------------------
 
@@ -115,8 +109,8 @@ class Netz(nn.Module):
 n_hidden = 128
 n_epochs = 100000
 print_every = 1000
-plot_every = 1000
-learning_rate = 0.005  # If you set this too high, it might explode. If too low, it might not learn
+plot_every = 100
+learning_rate = 0.0005  # If you set this too high, it might explode. If too low, it might not learn
 
 
 if os.path.isfile('Netz.pt'):
@@ -154,7 +148,7 @@ def getTrainData():
 
 model = Netz(n_letters, n_hidden, n_categories)
 optimizer = optim.SGD(model.parameters(), lr=learning_rate)
-criterion = nn.NLLLoss()
+criterion = nn.CrossEntropyLoss()
 
 
 def train(urteil_tensor, anklage_tensor):
@@ -193,7 +187,7 @@ def timeSince(since):
 
 start = time.time()
 
-"""
+
 for epoch in range(1, n_epochs + 1):
     category, line, category_tensor, line_tensor = randomTrainingPair()
     output, loss = train(category_tensor, line_tensor)
@@ -217,7 +211,6 @@ torch.save(model, 'Netz.pt')
 plt.figure()
 plt.plot(all_losses)
 plt.show()
-"""
 
 
 def evaluate(anklage_tensor):
