@@ -62,26 +62,21 @@ def anklageToTensor(urteil_t):
 
 def anklage_f():
     al = []
-    # print(len(faelle))
     for fall in faelle:
         al.append(fall[2])
-        # print(fall[2])
-    # print(al)
     return al
 
 
 data = {}
 urteile = []
 
-# print(faelle)
-# anklage_f()
 
-anklage = anklage_f()
+# anklage = anklage_f()
 
 for fall in faelle:
     fall_id = fall[0]
     stadt_id = fall[1]
-    # anklage = fall[2]
+    anklage = fall[2]
     verurteilt = fall[3]
     urteil = fall[4]
     schlagwoerter = fall[5]
@@ -118,8 +113,8 @@ class Netz(nn.Module):
 
 
 n_hidden = 128
-n_epochs = 1000
-print_every = 10
+n_epochs = 100000
+print_every = 1000
 plot_every = 1000
 learning_rate = 0.005  # If you set this too high, it might explode. If too low, it might not learn
 
@@ -140,15 +135,13 @@ def randomChoice(l):
 
 def randomTrainingPair():
     category = randomChoice(urteile)
-    line = randomChoice(data[urteil])
+    line = data.get(category)
     category_tensor = Variable(torch.LongTensor([urteile.index(category)]))
     line_tensor = Variable(anklageToTensor(line))
     return category, line, category_tensor, line_tensor
 
 
-# print(anklage)
-# print(random.choice(urteile))
-# print(random.choice(data[urteil]))
+randomTrainingPair()
 
 
 def getTrainData():
@@ -160,7 +153,7 @@ def getTrainData():
 
 
 model = Netz(n_letters, n_hidden, n_categories)
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+optimizer = optim.SGD(model.parameters(), lr=learning_rate)
 criterion = nn.NLLLoss()
 
 
@@ -200,7 +193,7 @@ def timeSince(since):
 
 start = time.time()
 
-
+"""
 for epoch in range(1, n_epochs + 1):
     category, line, category_tensor, line_tensor = randomTrainingPair()
     output, loss = train(category_tensor, line_tensor)
@@ -222,8 +215,9 @@ torch.save(model, 'Netz.pt')
 
 
 plt.figure()
-plt.plot(avg)
+plt.plot(all_losses)
 plt.show()
+"""
 
 
 def evaluate(anklage_tensor):
@@ -252,4 +246,4 @@ def predict(input_line, n_predictions=3):
             predictions.append([value, urteile[category_index]])
 
 
-# predict('Einbruch')
+predict(input("Bitte geben sie die Anklage ein: "))
